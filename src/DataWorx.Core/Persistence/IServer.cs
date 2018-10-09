@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace DataWorx.Core.Database
+namespace DataWorx.Core.Persistence
 {
     public interface IServer
     {
