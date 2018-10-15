@@ -39,9 +39,8 @@ steps:
     configuration: '$(buildConfiguration)'
     packDestination: '$(Build.ArtifactStagingDirectory)'
 
-- task: NuGetCommand@2
-  inputs:
-    command: push
-    nuGetFeedType: external
-    publishFeedCredentials: 'NugetPublishConnection' # Note this will need to be set up in Azure DevOps
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+- script: nuget setApiKey $(nugetApiKey)  # Note this variable will need to be set in Azure DevOps
+  displayName: 'nuget setApiKey'
+
+- script: nuget push $(Build.ArtifactStagingDirectory)/**/*.nupkg -Source https://api.nuget.org/v3/index.json
+  displayName: 'nuget push'
