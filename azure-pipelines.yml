@@ -1,0 +1,47 @@
+# CI build and push to Nuget
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+name: 1.0.$(Rev:..r)
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+
+# Build and run tests
+
+- script: dotnet restore
+  workingDirectory: 'src'
+  displayName: 'dotnet restore'
+
+- script: dotnet build --configuration $(buildConfiguration)
+  workingDirectory: 'src'
+  displayName: 'dotnet build $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test $(buildConfiguration)'
+  inputs:
+    command: test
+    projects: '**/*.Tests.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+# Package and push Nuget
+
+- task: NuGetCommand@2
+  displayName: 'nuget pack'
+  inputs:
+    command: pack
+    packagesToPack: '**/DataWorx.Core.csproj'
+    versioningScheme: byBuildNumber
+    configuration: '$(buildConfiguration)'
+    packDestination: '$(Build.ArtifactStagingDirectory)'
+
+- task: NuGetCommand@2
+  inputs:
+    command: push
+    nuGetFeedType: external
+    publishFeedCredentials: 'NugetPublishConnection' # Note this will need to be set up in Azure DevOps
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
