@@ -30,17 +30,8 @@ steps:
 
 # Package and push Nuget
 
-- task: NuGetCommand@2
-  displayName: 'nuget pack'
-  inputs:
-    command: pack
-    packagesToPack: '**/DataWorx.Core.csproj'
-    versioningScheme: byBuildNumber
-    configuration: '$(buildConfiguration)'
-    packDestination: '$(Build.ArtifactStagingDirectory)'
+- script: dotnet pack src/DataWorx.Core/DataWorx.Core.csproj -o $(Build.ArtifactStagingDirectory) -c $(buildConfiguration) -p:PackageVersion=$(Build.BuildNumber)
+  displayName: 'dotnet pack'
 
-- script: nuget setApiKey $(nugetApiKey)  # Note this variable will need to be set in Azure DevOps
-  displayName: 'nuget setApiKey'
-
-- script: nuget push $(Build.ArtifactStagingDirectory)/**/*.nupkg -Source https://api.nuget.org/v3/index.json
-  displayName: 'nuget push'
+- script: dotnet nuget push $(Build.ArtifactStagingDirectory)/**/*.nupkg -Source https://api.nuget.org/v3/index.json -k $(nugetApiKey)
+  displayName: 'dotnet nuget push'
