@@ -1,0 +1,33 @@
+# CI build and push to Nuget
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+name: 1.0$(Rev:.r)
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+
+# Build and run tests
+
+- script: dotnet build --configuration $(buildConfiguration)
+  workingDirectory: 'src'
+  displayName: 'dotnet build $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test $(buildConfiguration)'
+  inputs:
+    command: test
+    projects: '**/*.Tests.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+# Package and push Nuget
+
+- script: dotnet pack src/DataWorx.Core/DataWorx.Core.csproj -o $(Build.ArtifactStagingDirectory) -c $(buildConfiguration) -p:PackageVersion=$(Build.BuildNumber)
+  displayName: 'dotnet pack'
+
+- script: dotnet nuget push $(Build.ArtifactStagingDirectory)/**/*.nupkg -s https://api.nuget.org/v3/index.json -k $(nugetApiKey)
+  displayName: 'dotnet nuget push'
