@@ -13,10 +13,6 @@ steps:
 
 # Build and run tests
 
-- script: dotnet restore
-  workingDirectory: 'src'
-  displayName: 'dotnet restore'
-
 - script: dotnet build --configuration $(buildConfiguration)
   workingDirectory: 'src'
   displayName: 'dotnet build $(buildConfiguration)'
