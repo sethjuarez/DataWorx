@@ -1,7 +1,7 @@
 # CI build and push to Nuget
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-name: 1.0$(Rev:.r)
+name: 0.1$(Rev:.r)
 
 trigger: master
 
