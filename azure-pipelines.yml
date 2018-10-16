@@ -32,5 +32,9 @@ steps:
 - script: dotnet pack src/DataWorx.Core/DataWorx.Core.csproj -o $(Build.ArtifactStagingDirectory) -c $(buildConfiguration) -p:PackageVersion=$(Build.BuildNumber)
   displayName: 'dotnet pack'
 
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+
 - script: dotnet nuget push $(Build.ArtifactStagingDirectory)/**/*.nupkg -s https://api.nuget.org/v3/index.json -k $(nugetApiKey)
   displayName: 'dotnet nuget push'
