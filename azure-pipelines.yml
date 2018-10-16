@@ -3,7 +3,8 @@
 
 name: 0.1$(Rev:.r)
 
-trigger: master
+trigger: 
+- master
 
 pool:
   vmImage: 'Ubuntu 16.04'
